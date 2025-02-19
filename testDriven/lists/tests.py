@@ -29,6 +29,9 @@ class HomePageTest(TestCase):
 
         self.assertContains(response, "A new list item")
         self.assertTemplateUsed(response, "home.html")
+    def test_redirects_after_POST(self):
+        response = self.client.post("/", data={"item_text": "A new list item"})
+        self.assertRedirects(response, "/lists/the-only-list-in-the-world/")
 class ItemModelTest(TestCase):
     def test_saving_and_retrieving_items(self):
         first_item = Item()
