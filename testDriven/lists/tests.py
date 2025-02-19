@@ -49,4 +49,23 @@ class ItemModelTest(TestCase):
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, "The first (ever) list item")
         self.assertEqual(second_saved_item.text, "Item the second")
+        
+    class ListViewTest(TestCase):
+        def test_uses_list_template(self):
+            mylist = List.objects.create()
+            response = self.client.get(f"/lists/{mylist.id}/")
+            self.assertTemplateUsed(response, "list.html")
+
+        def test_displays_only_items_for_that_list(self):
+            correct_list = List.objects.create()
+            Item.objects.create(text="itemey 1", list=correct_list)
+            Item.objects.create(text="itemey 2", list=correct_list)
+            other_list = List.objects.create()
+            Item.objects.create(text="other list item", list=other_list)
+
+            response = self.client.get(f"/lists/{correct_list.id}/")
+
+            self.assertContains(response, "itemey 1")
+            self.assertContains(response, "itemey 2")
+            self.assertNotContains(response, "other list item")
     
