@@ -68,3 +68,11 @@ class NewVisitorTest(LiveServerTestCase):
         page_text = self.browser.find_element(By.TAG_NAME, "body").text
         self.assertNotIn("Buy peacock feathers", page_text)
         self.assertIn("Buy milk", page_text)
+        
+class ListViewTest(TestCase):
+    def test_displays_all_list_items(self):
+        Item.objects.create(text="itemey 1")
+        Item.objects.create(text="itemey 2")
+        response = self.client.get("/lists/the-only-list-in-the-world/")
+        self.assertContains(response, "itemey 1")
+        self.assertContains(response, "itemey 2")
